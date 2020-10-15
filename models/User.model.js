@@ -28,9 +28,7 @@ const UserSchema = new Schema(
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    // posts: [String],
-    // comments: [String],
-    // friends: [String],
+    // friendrequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
     // pets: [String],
   },
   { timestamps: true }

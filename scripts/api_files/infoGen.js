@@ -1,7 +1,7 @@
+require("dotenv").config();
 var faker = require("faker");
 
-const powerword =
-  "$2a$10$IC6EKWhF16QDSa.wfAVPkesYoQTCmuEaWJ7zZCgalOqCuGMG3YuJW";
+const powerword = process.env.PASSWORD_HASH;
 
 function Faker(n, images, chance, pw) {
   this.nPeople = n || 1;

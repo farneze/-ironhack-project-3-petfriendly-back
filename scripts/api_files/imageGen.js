@@ -1,6 +1,7 @@
+require("dotenv").config();
 const axios = require("axios");
 
-const key = "test";
+const key = process.env.UNSPLASH_AK;
 
 function Unsplash(qty, query) {
   this.qty = qty || "10";

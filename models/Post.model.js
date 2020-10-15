@@ -18,8 +18,8 @@ const PostSchema = new Schema(
     },
     adoption: String,
     tag: [String],
-    likes: [String],
-    comments: [String],
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }
 );
