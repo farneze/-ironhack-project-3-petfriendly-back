@@ -8,7 +8,7 @@ const CommentSchema = new Schema(
       required: [true, "Comment is required."],
       trim: true,
     },
-    Likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

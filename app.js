@@ -7,7 +7,7 @@ const app = express();
 
 // Configura o app para entender requisições com tipo de corpo JSON
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: process.env.CLIENT_DOMAIN }));
 
 const authRouter = require("./routes/auth.routes");
 const userRouter = require("./routes/user.routes");

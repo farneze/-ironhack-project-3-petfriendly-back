@@ -1,6 +1,4 @@
 const router = require("express").Router();
-const passport = require("passport");
-const mongoose = require("mongoose");
 
 const { ObjectId } = require("mongoose").Types;
 
@@ -15,33 +13,56 @@ const commentsList = require("../json/comments.json");
 // OK 1000 people
 // OK each person a few random friends
 // OK each person 3 posts
-// each post 50% chance of like
+// each post 1% chance of like
 // OK each post 1 comment from a friend
-// each comment 30% chance of like
+// each comment 1% chance of like
 
-function randomFrom(thing) {
-  // return [...new Array(times)].map((el) => {
-  //   Math.floor(Math.random() * thing.length);
-  // });
-  const randomID = Math.floor(Math.random() * thing.length);
-  return thing[randomID];
-}
+router.post("/addlikes/:chance", async (req, res) => {
+  try {
+    const likesChance = Number(req.params.chance);
 
-async function addFriends(friend1, friend2) {
-  const addUser1Result = await User.findOneAndUpdate(
-    { _id: friend1._id },
-    { $push: { friends: friend2._id } },
-    { new: true }
-  );
-  const addUser2Result = await User.findOneAndUpdate(
-    { _id: friend2._id },
-    { $push: { friends: friend1._id } },
-    { new: true }
-  );
-  return [addUser1Result, addUser2Result];
-}
+    // recupera todos Usuarios, posts e comentarios
+    const allUsers = await User.find({}, { _id: 1 });
+    const allPosts = await Post.find({}, { _id: 1 });
+    const allComments = await Comment.find({}, { _id: 1 });
 
-async function likeChance(post, chance) {}
+    const resultTask = await Promise.all(
+      allUsers.map(async (user, i) => {
+        for (let post of allPosts) {
+          await likedOrNot(user, "post", post, likesChance);
+        }
+        for (let [i, comment] of allComments.entries()) {
+          await likedOrNot(user, "comment", comment, likesChance, i);
+        }
+
+        // // Para cada post uma chance de like
+        // const postResult = allPosts.map(
+        //   async (post) => await likedOrNot(user, "post", post, likesChance)
+        // );
+
+        // // Para cada commentario uma chance de like
+        // const commentsResult = allComments.map(
+        //   async (comment) =>
+        //     await likedOrNot(user, "comment", comment, likesChance)
+        // );
+        // console.log("LUCKY!");
+        return [postResult, commentsResult];
+      })
+    );
+
+    if (resultTask) {
+      console.log("----- Done! -----");
+      console.log(resultTask);
+      return res.status(200).json("OK");
+    }
+
+    console.log(resultTask);
+    console.log("----- Not done! -----");
+    return res.status(404).json({ msg: "Task failed" });
+  } catch (err) {
+    return res.status(500).json({ error: `${err}` });
+  }
+});
 
 router.post("/addcomments/:number", async (req, res) => {
   try {
@@ -53,11 +74,10 @@ router.post("/addcomments/:number", async (req, res) => {
       "friends"
     );
 
-    const resultTask = Promise.all(
+    const resultTask = await Promise.all(
       allUsers.map(async (user, i1) => {
         // Coleta cada amigo como objeto
         const friends = user.friends;
-        // console.log(i1);
         // lista as arrays de posts de cada amigo
         const friendsPostsIDs = friends.map((friend) => friend.posts);
 
@@ -119,7 +139,7 @@ router.post("/addposts/:number", async (req, res) => {
 
     const allUsers = await User.find({}, { _id: 1 });
 
-    const resultTask = Promise.all(
+    const resultTask = await Promise.all(
       allUsers.map(async (user) =>
         postsQty.map(async (el) => {
           const randPost = randomFrom(postsList);
@@ -164,7 +184,7 @@ router.post("/addfriends/:number", async (req, res) => {
     //   { _id: 5f8779e839410d548c17f5b3 }
     // ]
 
-    const resultTask = Promise.all(
+    const resultTask = await Promise.all(
       allUsers.map(async (user) =>
         friendsQty.map(async (el) => {
           const randUser = randomFrom(allUsers);
@@ -189,14 +209,16 @@ router.post("/addfriends/:number", async (req, res) => {
 });
 
 // ================ USERS ================
-router.post("/addusers", async (req, res) => {
+router.post("/addusers/:number", async (req, res) => {
   try {
-    console.log("Adding Users...");
+    const usersQty = Number(req.params.number);
 
-    const resultTask = Promise.all(
+    const resultTask = await Promise.all(
       [...new Array(10)].map(
         async (el, i) =>
-          await User.create(usersList.slice(i * 100, (i + 1) * 100))
+          await User.create(
+            usersList.slice((i * usersQty) / 10, ((i + 1) * usersQty) / 10)
+          )
       )
     );
 
@@ -211,5 +233,58 @@ router.post("/addusers", async (req, res) => {
     return res.status(500).json({ error: `${err}` });
   }
 });
+
+// ============= FUNCTIONS =============
+function randomFrom(thing) {
+  // return [...new Array(times)].map((el) => {
+  //   Math.floor(Math.random() * thing.length);
+  // });
+  const randomID = Math.floor(Math.random() * thing.length);
+  return thing[randomID];
+}
+
+async function addFriends(friend1, friend2) {
+  const addUser1Result = await User.findOneAndUpdate(
+    { _id: friend1._id },
+    { $push: { friends: friend2._id } },
+    { new: true }
+  );
+  const addUser2Result = await User.findOneAndUpdate(
+    { _id: friend2._id },
+    { $push: { friends: friend1._id } },
+    { new: true }
+  );
+  return [addUser1Result, addUser2Result];
+}
+
+async function likedOrNot(user, itemType, item, chance, i) {
+  // Se o random for menor que a chance...
+  if (Math.random() < chance) {
+    // E o tipo do ID for post
+    if (itemType == "post") {
+      // Acrescenta o ID do usuário no array like
+      const result = await Post.findOneAndUpdate(
+        { _id: item._id },
+        { $push: { likes: user._id } },
+        { new: true }
+      );
+      return result;
+    }
+
+    // E o tipo do ID for comment
+    if (itemType == "comment") {
+      // Acrescenta o ID do usuário no array like
+      const result = await Comment.findOneAndUpdate(
+        { _id: item._id },
+        { $push: { likes: user._id } },
+        { new: true }
+      );
+      return result;
+    }
+    return "No item type match";
+  } else {
+    return "Not this time!";
+  }
+}
 
 module.exports = router;
