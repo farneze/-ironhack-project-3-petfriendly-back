@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const passport = require("passport");
 
 const { ObjectId } = require("mongoose").Types;
 
@@ -88,7 +89,11 @@ router.post("/addcomments/:number", async (req, res) => {
           const randComment = randomFrom(commentsList);
 
           // Constroi o objeto do comentario
-          const commentObj = { userID: user._id, comment: randComment };
+          const commentObj = {
+            userID: user._id,
+            postID: postID,
+            comment: randComment,
+          };
 
           // Cria o comentario aleatório
           const commentResult = await Comment.create(commentObj);
@@ -231,6 +236,29 @@ router.post("/addusers/:number", async (req, res) => {
     return res.status(500).json({ error: `${err}` });
   }
 });
+
+// ================ Get Posts List ================
+router.get(
+  "/listposts",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      console.log(req.user);
+      const userId = req.user._id;
+      console.log("UserID => " + userId);
+      const result = await User.findOne({ _id: ObjectId(userId) });
+
+      // const result = { user: req.user };
+      if (result) {
+        return res.status(200).json(result.posts);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      return res.status(500).json({ error: `${err}` });
+    }
+  }
+);
 
 // ============= FUNCTIONS =============
 function randomFrom(thing) {

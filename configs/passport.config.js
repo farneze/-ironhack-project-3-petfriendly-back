@@ -1,5 +1,5 @@
 const passport = require("passport");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local").Strategy;
 
 const JWTstrategy = require("passport-jwt").Strategy;
