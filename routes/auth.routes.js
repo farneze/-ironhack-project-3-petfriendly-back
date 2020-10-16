@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const passport = require("passport");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");

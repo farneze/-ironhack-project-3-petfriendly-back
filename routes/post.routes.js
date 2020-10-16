@@ -113,6 +113,30 @@ router.get(
   }
 );
 
+// cRud 3 - Read Friends Posts
+router.get(
+  "/post",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const id = req.user._id;
+
+      const result = await User.findOne({ _id: ObjectId(id) })
+        .populate("friends")
+        .populate("posts");
+
+      // const result = { user: req.user };
+      if (result) {
+        return res.status(200).json(result);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      return res.status(500).json({ error: `${err}` });
+    }
+  }
+);
+
 // cruD - Delete One
 router.delete(
   "/post/:id",
