@@ -23,7 +23,6 @@ const UserSchema = new Schema(
     image: {
       type: String,
       trim: true,
-      required: [true, "Picture is required."],
     },
     posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],

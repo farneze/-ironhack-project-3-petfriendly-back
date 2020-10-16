@@ -25,4 +25,29 @@ router.get(
   }
 );
 
+router.get(
+  "/userinfo",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const userID = req.user._id;
+      console.log(userID);
+
+      const userProfile = await User.findOne({ _id: ObjectId(userID) });
+
+      console.log(await userProfile);
+
+      // await postsArray;
+
+      if (userProfile) {
+        return res.status(200).json(userProfile);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      return res.status(500).json({ error: `${err}` });
+    }
+  }
+);
+
 module.exports = router;
