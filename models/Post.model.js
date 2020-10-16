@@ -16,7 +16,7 @@ const PostSchema = new Schema(
       required: [true, "Description is required."],
       trim: true,
     },
-    adoption: String,
+    adoption: Boolean,
     tag: [String],
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],

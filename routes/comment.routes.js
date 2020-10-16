@@ -31,7 +31,7 @@ const Comment = require("../models/Comment.model");
 
 // Crud - CREATE
 router.post(
-  "/post",
+  "/comment",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
@@ -65,7 +65,7 @@ router.post(
 
 // cRud 1 - Read One, brings comments
 router.get(
-  "/post/:id",
+  "/comment/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
@@ -91,7 +91,7 @@ router.get(
 
 // cRud 2 - Read Many
 router.get(
-  "/post",
+  "/comment",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
@@ -115,7 +115,7 @@ router.get(
 
 // cruD - Delete One
 router.delete(
-  "/post/:id",
+  "/comment/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
