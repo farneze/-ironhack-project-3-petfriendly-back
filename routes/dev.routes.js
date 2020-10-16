@@ -46,17 +46,15 @@ router.post("/addlikes/:chance", async (req, res) => {
         //     await likedOrNot(user, "comment", comment, likesChance)
         // );
         // console.log("LUCKY!");
-        return [postResult, commentsResult];
+        return ["ok"];
       })
     );
 
     if (resultTask) {
       console.log("----- Done! -----");
-      console.log(resultTask);
       return res.status(200).json("OK");
     }
 
-    console.log(resultTask);
     console.log("----- Not done! -----");
     return res.status(404).json({ msg: "Task failed" });
   } catch (err) {
