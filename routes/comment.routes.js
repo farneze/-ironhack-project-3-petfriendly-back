@@ -7,28 +7,6 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Comment = require("../models/Comment.model");
 
-// REST
-
-// REpresentational State Transfer
-
-// Uma API é considerada RESTful quando ela adere às regras do REST
-
-// GET => Buscar dados (cRud) READ
-// JSON API especifica que a resposta para requisições GET sem parametro de rota devem retornar uma lista de todas as entidades e o Status HTTP 200 OK
-// router.get("/task", async (req, res) => {
-//   try {
-//     const result = await Task.find().populate("tasks");
-
-//     return res.status(200).json(result);
-//   } catch (err) {
-//     return res.status(500).json({ error: err });
-//   }
-// });
-
-// JSON API especifica que a resposta para requisições GET com parametro de rota devem retornar a entidade buscada ou nada e o Status HTTP 200 OK
-
-// CRUD
-
 // Crud - CREATE
 router.post(
   "/comment",
@@ -38,72 +16,37 @@ router.post(
       // const id = req.params._id;
       // console.log(req.params);
 
-      const userId = req.user._id;
+      const userID = req.user._id;
       // console.log(req.user);
 
-      const post = req.body;
+      const comment = req.body.comment;
+      const postID = req.body.postID;
       // console.log(req.body);
 
-      const resultPost = await Post.create(post);
-      const result = await User.findOneAndUpdate(
-        { _id: userId },
-        { $push: { posts: resultPost._id } },
+      const commentObj = {
+        userID: userID,
+        postID: postID,
+        comment: comment,
+      };
+
+      // Cria o comentario
+      const commentResult = await Comment.create(commentObj);
+
+      const postResult = await Post.findOneAndUpdate(
+        { _id: postID },
+        { $push: { comments: commentResult._id } },
         { new: true }
       );
 
-      // const result = { response: "etest" };
-      if (result) {
-        return res.status(200).json(result);
-      }
-
-      return res.status(404).json({ msg: "Document not found" });
-    } catch (err) {
-      return res.status(500).json({ error: `${err}` });
-    }
-  }
-);
-
-// cRud 1 - Read One, brings comments
-router.get(
-  "/comment/:id",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      // const id = req.user._id;
-      // console.log(id);
-
-      const result = await Post.findOne({ _id: ObjectId(id) }).populate(
-        "comments"
+      const userResult = await User.findOneAndUpdate(
+        { _id: userID },
+        { $push: { comments: commentResult._id } },
+        { new: true }
       );
 
-      // const result = { response: id };
-      if (result) {
-        return res.status(200).json(result);
-      }
-
-      return res.status(404).json({ msg: "Document not found" });
-    } catch (err) {
-      return res.status(500).json({ error: `${err}` });
-    }
-  }
-);
-
-// cRud 2 - Read Many
-router.get(
-  "/comment",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const id = req.user._id;
-      console.log(id);
-
-      const result = await User.findOne({ _id: ObjectId(id) }).populate(
-        "posts"
-      );
-      // const result = { user: req.user };
-      if (result) {
-        return res.status(200).json(result);
+      // const commentResult = { response: "etest" };
+      if (commentResult) {
+        return res.status(200).json(commentResult);
       }
 
       return res.status(404).json({ msg: "Document not found" });
@@ -119,40 +62,36 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const postId = req.params.id;
+      const commentId = req.params.id;
       const userId = req.user._id;
+      console.log(userId);
 
-      // Gets entire post and its comments
-      const allPostComments = await Post.findOne({
-        _id: ObjectId(postId),
-      }).populate("comments");
-
-      // Deletes...
-      const commResult = await allPostComments.comments.map(async (el) => {
-        // ...a comment from commentDB...
-        const commentRemoval = await Comment.deleteOne({
-          _id: ObjectId(el._id),
-        });
-        // ... and the from the comments list of the user who created it
-        const userCommentRemoval = await User.findOneAndUpdate(
-          { _id: ObjectId(el.userID) },
-          { $pull: { comments: { $in: [ObjectId(el._id)] } } }
-        );
-        return "Removed comments from post!";
+      // Gets post in which comment is located
+      const postOfComment = await Post.findOne({
+        comments: ObjectId(commentId),
       });
 
-      // Deletes post
-      const result = await Post.deleteOne({ _id: ObjectId(postId) });
+      const postId = postOfComment._id;
 
-      // Remove post from user profile
-      const updatedProject = await User.findOneAndUpdate(
-        { _id: userId },
-        { $pull: { posts: { $in: [ObjectId(postId)] } } }
+      // Deletes a comment from commentDB...
+      const commentRemoval = await Comment.deleteOne({
+        _id: ObjectId(commentId),
+      });
+      // ... from the post it is located...
+      const postCommentRemoval = await Post.findOneAndUpdate(
+        { _id: ObjectId(postId) },
+        { $pull: { comments: { $in: [ObjectId(commentId)] } } }
+      );
+      // ... and the from the comments list of the user who created it.
+      const userCommentRemoval = await User.findOneAndUpdate(
+        { _id: ObjectId(userId) },
+        { $pull: { comments: { $in: [ObjectId(commentId)] } } }
       );
 
+      const result = commentRemoval;
       // const result = { response: "test" };
       if (result) {
-        return res.status(200).json(allPostComments);
+        return res.status(200).json(commentRemoval);
       }
 
       return res.status(404).json({ msg: "Document not found" });

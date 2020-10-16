@@ -77,7 +77,11 @@ router.post("/addcomments/:number", async (req, res) => {
           const randComment = randomFrom(commentsList);
 
           // Constroi o objeto do comentario
-          const commentObj = { userID: user._id, comment: randComment };
+          const commentObj = {
+            userID: user._id,
+            postID: postID,
+            comment: randComment,
+          };
 
           // Cria o comentario aleatório
           const commentResult = await Comment.create(commentObj);

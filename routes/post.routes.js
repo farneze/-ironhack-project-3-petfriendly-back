@@ -52,8 +52,8 @@ router.post(
       );
 
       // const result = { response: "etest" };
-      if (result) {
-        return res.status(200).json(result);
+      if (resultPost) {
+        return res.status(200).json(resultPost);
       }
 
       return res.status(404).json({ msg: "Document not found" });
