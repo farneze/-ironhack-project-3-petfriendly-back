@@ -11,6 +11,42 @@ const usersList = require("../json/users.json");
 const postsList = require("../json/posts.json");
 const commentsList = require("../json/comments.json");
 
+// REST
+
+// REpresentational State Transfer
+
+// Uma API é considerada RESTful quando ela adere às regras do REST
+
+// GET => Buscar dados (cRud) READ
+// JSON API especifica que a resposta para requisições GET sem parametro de rota devem retornar uma lista de todas as entidades e o Status HTTP 200 OK
+// router.get("/task", async (req, res) => {
+//   try {
+//     const result = await Task.find().populate("tasks");
+
+//     return res.status(200).json(result);
+//   } catch (err) {
+//     return res.status(500).json({ error: err });
+//   }
+// });
+
+// JSON API especifica que a resposta para requisições GET com parametro de rota devem retornar a entidade buscada ou nada e o Status HTTP 200 OK
+
+// CRUD
+
+// Crud - CREATE
+// cRud - Read
+// crUd - Update
+// cruD - Delete
+
+// const id = req.params._id;
+// console.log(req.params);
+
+// const userId = req.user._id;
+// console.log(req.user);
+
+// const post = req.body;
+// console.log(req.body);
+
 // OK 1000 people
 // OK each person a few random friends
 // OK each person 3 posts
