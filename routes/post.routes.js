@@ -35,14 +35,9 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      // const id = req.params._id;
-      // console.log(req.params);
-
       const userId = req.user._id;
-      // console.log(req.user);
 
       const post = req.body;
-      // console.log(req.body);
 
       const resultPost = await Post.create(post);
       const result = await User.findOneAndUpdate(
@@ -70,14 +65,11 @@ router.get(
   async (req, res) => {
     try {
       const { id } = req.params;
-      // const id = req.user._id;
-      // console.log(id);
 
       const result = await Post.findOne({ _id: ObjectId(id) }).populate(
         "comments"
       );
 
-      // const result = { response: id };
       if (result) {
         return res.status(200).json(result);
       }
@@ -96,12 +88,11 @@ router.get(
   async (req, res) => {
     try {
       const id = req.user._id;
-      console.log(id);
 
       const result = await User.findOne({ _id: ObjectId(id) }).populate(
         "posts"
       );
-      // const result = { user: req.user };
+
       if (result) {
         return res.status(200).json(result);
       }
@@ -120,18 +111,14 @@ router.get(
   async (req, res) => {
     try {
       const id = req.user._id;
-      console.log(id);
+      // console.log(req.user);
+      // console.log(req.user._id);
+
       const userFriends = await User.findOne({ _id: ObjectId(id) }).populate(
         "friends"
       );
 
       const friendsPosts = userFriends.friends.map((el) => el.posts).flat();
-
-      console.log(friendsPosts[0]);
-
-      // const postsArray = await Post.findOne({
-      //   _id: ObjectId(friendsPosts[0]),
-      // });
 
       const postsArray = await Promise.all(
         friendsPosts.map(
@@ -141,13 +128,9 @@ router.get(
             })
         )
       );
-
-      console.log(await postsArray);
-
-      // await postsArray;
-
-      if (postsArray) {
-        return res.status(200).json(postsArray);
+      const response = { posts: postsArray };
+      if (response) {
+        return res.status(200).json(response);
       }
 
       return res.status(404).json({ msg: "Document not found" });
