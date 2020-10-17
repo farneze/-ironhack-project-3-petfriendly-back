@@ -17,6 +17,7 @@ const PostSchema = new Schema(
       trim: true,
     },
     adoption: Boolean,
+    userID: { type: Schema.Types.ObjectId, ref: "User" },
     tag: [String],
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
