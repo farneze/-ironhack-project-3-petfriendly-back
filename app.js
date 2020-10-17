@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_DOMAIN }));
 
 const authRouter = require("./routes/auth.routes");
+const homeRouter = require("./routes/home.routes");
 const userRouter = require("./routes/user.routes");
 const postRouter = require("./routes/post.routes");
 const commentRouter = require("./routes/comment.routes");
@@ -23,6 +24,7 @@ const devRoutes = require("./routes/dev.routes.js");
 app.use("/dev", devRoutes);
 
 app.use("/api", authRouter);
+app.use("/api", homeRouter);
 app.use("/api", userRouter);
 app.use("/api", postRouter);
 app.use("/api", commentRouter);

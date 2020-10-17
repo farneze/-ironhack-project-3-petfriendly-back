@@ -13,15 +13,10 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      // const id = req.params._id;
-      // console.log(req.params);
-
       const userID = req.user._id;
-      // console.log(req.user);
 
       const comment = req.body.comment;
       const postID = req.body.postID;
-      // console.log(req.body);
 
       const commentObj = {
         userID: userID,

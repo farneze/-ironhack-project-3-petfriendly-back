@@ -89,12 +89,14 @@ router.get(
     try {
       const id = req.user._id;
 
-      const result = await User.findOne({ _id: ObjectId(id) }).populate(
+      const userProfile = await User.findOne({ _id: ObjectId(id) }).populate(
         "posts"
       );
 
-      if (result) {
-        return res.status(200).json(result);
+      const userPosts = userProfile.posts;
+
+      if (userPosts) {
+        return res.status(200).json({ posts: userPosts });
       }
 
       return res.status(404).json({ msg: "Document not found" });
@@ -111,8 +113,6 @@ router.get(
   async (req, res) => {
     try {
       const id = req.user._id;
-      // console.log(req.user);
-      // console.log(req.user._id);
 
       const userFriends = await User.findOne({ _id: ObjectId(id) }).populate(
         "friends"
@@ -120,15 +120,18 @@ router.get(
 
       const friendsPosts = userFriends.friends.map((el) => el.posts).flat();
 
-      const postsArray = await Promise.all(
-        friendsPosts.map(
-          async (el, i) =>
-            await Post.findOne({
-              _id: ObjectId(el),
-            })
-        )
-      );
+      const postsArray = await Post.find({ _id: friendsPosts });
+      // const postsArray = await Promise.all(
+      //   friendsPosts.map(
+      //     async (el, i) =>
+      //       await Post.findOne({
+      //         _id: ObjectId(el),
+      //       })
+      //   )
+      // );
+
       const response = { posts: postsArray };
+
       if (response) {
         return res.status(200).json(response);
       }

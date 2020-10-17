@@ -183,7 +183,10 @@ router.post("/addposts/:number", async (req, res) => {
         postsQty.map(async (el) => {
           const randPost = randomFrom(postsList);
 
-          const resultPost = await Post.create(randPost);
+          const resultPost = await Post.create({
+            userID: user._id,
+            ...randPost,
+          });
 
           const result = await User.findOneAndUpdate(
             { _id: user._id },
