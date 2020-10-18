@@ -67,11 +67,11 @@ router.delete(
   async (req, res) => {
     try {
       const id = req.params._id;
-      console.log(req.params);
+      // console.log(req.params);
       const userId = req.user._id;
-      console.log(req.user);
+      // console.log(req.user);
       const post = req.body;
-      console.log(req.body);
+      // console.log(req.body);
 
       const userProfile = await User.findOne({ _id: ObjectId(id) }).populate(
         "posts"
