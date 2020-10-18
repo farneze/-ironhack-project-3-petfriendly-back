@@ -120,15 +120,9 @@ router.get(
 
       const friendsPosts = userFriends.friends.map((el) => el.posts).flat();
 
-      const postsArray = await Post.find({ _id: friendsPosts });
-      // const postsArray = await Promise.all(
-      //   friendsPosts.map(
-      //     async (el, i) =>
-      //       await Post.findOne({
-      //         _id: ObjectId(el),
-      //       })
-      //   )
-      // );
+      const postsArray = await Post.find({ _id: friendsPosts }).populate(
+        "userID"
+      );
 
       const response = { posts: postsArray };
 
