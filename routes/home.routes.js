@@ -11,9 +11,10 @@ router.get(
   async (req, res) => {
     try {
       const userID = req.user._id;
-      // console.log(userID);
-      const userProfile = await User.findOne({ _id: ObjectId(userID) });
-      // console.log(userProfile);
+
+      const userProfile = await User.findOne({
+        _id: ObjectId(userID),
+      }); //.populate("friends");
 
       if (userProfile) {
         return res.status(200).json(userProfile);
