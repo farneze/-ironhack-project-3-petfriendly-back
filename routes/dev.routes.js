@@ -282,9 +282,9 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      console.log(req.user);
+      // console.log(req.user);
       const userId = req.user._id;
-      console.log("UserID => " + userId);
+      // console.log("UserID => " + userId);
       const result = await User.findOne({ _id: ObjectId(userId) });
 
       // const result = { user: req.user };

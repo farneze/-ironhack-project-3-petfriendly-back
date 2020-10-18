@@ -10,7 +10,7 @@ const User = require("../models/User.model");
 // Receber os dados do formulario de cadastro de usuario
 
 router.post("/signup", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   // Extrair informacoes recebidas da requisicao http que veio do navegador
   const { name, email, password, image } = req.body;
@@ -51,7 +51,7 @@ router.post("/signup", async (req, res) => {
     // Gerar o hash utilizando o salt criado anteriormente e o que o usuario escreveu no campo senha no navegador
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    console.log("Hashed password => ", hashedPassword);
+    // console.log("Hashed password => ", hashedPassword);
 
     // Cria o usuario no banco, passando a senha criptografada
     const result = await User.create({
