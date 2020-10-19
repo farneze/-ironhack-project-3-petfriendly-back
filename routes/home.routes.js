@@ -5,6 +5,73 @@ const { ObjectId } = require("mongoose").Types;
 
 const User = require("../models/User.model");
 
+router.delete(
+  "/friend/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const friendID = req.params.id;
+      // console.log(req.params);
+      const userID = req.user._id;
+      // console.log(req.user);
+
+      const addUser1Result = await User.findOneAndUpdate(
+        { _id: ObjectId(friendID) },
+        { $pull: { friends: ObjectId(userID) } },
+        { new: true }
+      );
+      const addUser2Result = await User.findOneAndUpdate(
+        { _id: ObjectId(userID) },
+        { $pull: { friends: ObjectId(friendID) } },
+        { new: true }
+      );
+
+      const result = { msg: "Ok" };
+
+      if (result) {
+        return res.status(200).json(result);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      console.error({ error: `${err}` });
+    }
+  }
+);
+
+router.patch(
+  "/friend/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const friendID = req.params.id;
+      console.log(req.params);
+      const userID = req.user._id;
+      console.log(req.user);
+
+      const addUser1Result = await User.findOneAndUpdate(
+        { _id: ObjectId(friendID) },
+        { $push: { friends: ObjectId(userID) } },
+        { new: true }
+      );
+      const addUser2Result = await User.findOneAndUpdate(
+        { _id: ObjectId(userID) },
+        { $push: { friends: ObjectId(friendID) } },
+        { new: true }
+      );
+
+      const result = { msg: "Ok" };
+      if (result) {
+        return res.status(200).json(result);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      console.error({ error: `${err}` });
+    }
+  }
+);
+
 router.get(
   "/profile",
   passport.authenticate("jwt", { session: false }),

@@ -10,8 +10,6 @@ const User = require("../models/User.model");
 // Receber os dados do formulario de cadastro de usuario
 
 router.post("/signup", async (req, res) => {
-  // console.log(req.body);
-
   // Extrair informacoes recebidas da requisicao http que veio do navegador
   const { name, email, password, image } = req.body;
 
@@ -65,7 +63,7 @@ router.post("/signup", async (req, res) => {
     console.error(err);
     // Mensagem de erro para exibir erros de validacao do Schema do Mongoose
     if (err instanceof mongoose.Error.ValidationError) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: `${err.message}` });
     } else if (err.code === 11000) {
       res.status(500).json({
         error:
@@ -93,10 +91,7 @@ router.post("/login", async (req, res, next) => {
 
         const body = { _id: user._id, email: user.email, name: user.name };
 
-        const token = jwt.sign(
-          { user: body, complete: user },
-          process.env.TOKEN_SIGN_SECRET
-        );
+        const token = jwt.sign({ user: body }, process.env.TOKEN_SIGN_SECRET);
 
         return res.json({ token, user: body });
       });

@@ -59,7 +59,7 @@ router.delete(
     try {
       const commentId = req.params.id;
       const userId = req.user._id;
-      console.log(userId);
+      // console.log(userId);
 
       // Gets post in which comment is located
       const postOfComment = await Post.findOne({

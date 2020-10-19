@@ -7,26 +7,6 @@ const User = require("../models/User.model");
 const Post = require("../models/Post.model");
 const Comment = require("../models/Comment.model");
 
-// REST
-
-// REpresentational State Transfer
-
-// Uma API é considerada RESTful quando ela adere às regras do REST
-
-// GET => Buscar dados (cRud) READ
-// JSON API especifica que a resposta para requisições GET sem parametro de rota devem retornar uma lista de todas as entidades e o Status HTTP 200 OK
-// router.get("/task", async (req, res) => {
-//   try {
-//     const result = await Task.find().populate("tasks");
-
-//     return res.status(200).json(result);
-//   } catch (err) {
-//     return res.status(500).json({ error: err });
-//   }
-// });
-
-// JSON API especifica que a resposta para requisições GET com parametro de rota devem retornar a entidade buscada ou nada e o Status HTTP 200 OK
-
 // CRUD
 
 // Crud - CREATE
@@ -37,16 +17,56 @@ router.post(
     try {
       const userId = req.user._id;
 
-      const post = req.body;
+      const post = { ...req.body, userID: userId };
 
       const resultPost = await Post.create(post);
+
       const result = await User.findOneAndUpdate(
         { _id: userId },
         { $push: { posts: resultPost._id } },
         { new: true }
       );
 
-      // const result = { response: "etest" };
+      // const result = { response: "test" };
+      if (resultPost) {
+        return res.status(200).json(resultPost);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      return res.status(500).json({ error: `${err}` });
+    }
+  }
+);
+
+router.post(
+  "/postlike/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const postID = req.params.id;
+
+      const userID = req.user._id;
+      console.log(postID);
+      const postInfo = await Post.findOne({
+        _id: ObjectId(postID),
+        likes: ObjectId(userID),
+      });
+      console.log(postInfo);
+
+      postInfo === null
+        ? await Post.findOneAndUpdate(
+            { _id: ObjectId(postID) },
+            { $push: { likes: ObjectId(userID) } },
+            { new: true }
+          )
+        : await Post.findOneAndUpdate(
+            { _id: ObjectId(postID) },
+            { $pull: { likes: ObjectId(userID) } },
+            { new: true }
+          );
+
+      // const result = { response: "test" };
       if (resultPost) {
         return res.status(200).json(resultPost);
       }
