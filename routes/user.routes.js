@@ -37,12 +37,13 @@ router.patch(
   async (req, res) => {
     try {
       const userId = req.user._id;
-      // console.log(req.user);
+      console.log(req.user);
+
       const post = req.body;
-      // console.log(req.body);
+      console.log(req.body);
 
       const userProfile = await User.findOneAndUpdate(
-        { _id: req.user._id },
+        { _id: ObjectId(userId) },
         req.body,
         {
           new: true,
