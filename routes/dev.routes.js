@@ -72,23 +72,11 @@ router.post("/addlikes/:chance", async (req, res) => {
           await likedOrNot(user, "comment", comment, likesChance, i);
         }
 
-        // // Para cada post uma chance de like
-        // const postResult = allPosts.map(
-        //   async (post) => await likedOrNot(user, "post", post, likesChance)
-        // );
-
-        // // Para cada commentario uma chance de like
-        // const commentsResult = allComments.map(
-        //   async (comment) =>
-        //     await likedOrNot(user, "comment", comment, likesChance)
-        // );
-        // console.log("LUCKY!");
-        return ["ok"];
+        return "ok";
       })
     );
 
     if (resultTask) {
-      console.log("----- Done! -----");
       return res.status(200).json("OK");
     }
 

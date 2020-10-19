@@ -25,27 +25,24 @@ router.post("/signup", async (req, res) => {
   }
 
   // Senha é obrigatória, precisa ter no mínimo 8 caracteres, precisa ter letras maiúsculas, minúsculas, números e caracteres especiais
-  // if (
-  //   !password ||
-  //   !password.match(
-  //     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/
-  //   )
-  // ) {
-  //   errors.password =
-  //     "Password is required, should be at least 8 characters long, should contain an uppercase letter, lowercase letter, a number and a special character";
-  // }
+  if (
+    !password ||
+    !password.match(
+      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/
+    )
+  ) {
+    errors.password =
+      "Password is required, should be at least 8 characters long, should contain an uppercase letter, lowercase letter, a number and a special character";
+  }
 
   // Se o objeto errors tiver propriedades (chaves), retorne as mensagens de erro
   if (Object.keys(errors).length) {
-    console.log(errors);
     return res.status(400).json({ errors });
   }
 
   try {
     // Gerar o salt
     const salt = await bcrypt.genSalt(saltRounds);
-    console.log(salt);
-    console.log(password);
     // Gerar o hash utilizando o salt criado anteriormente e o que o usuario escreveu no campo senha no navegador
     const hashedPassword = await bcrypt.hash(password, salt);
 
