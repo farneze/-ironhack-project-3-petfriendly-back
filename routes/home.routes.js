@@ -73,18 +73,22 @@ router.patch(
 );
 
 router.get(
-  "/profile",
+  "/profile/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const userID = req.user._id;
+      const profileID = req.params.id;
+      // console.log("profileID");
+      // console.log(profileID);
 
-      const userProfile = await User.findOne({
-        _id: ObjectId(userID),
-      }); //.populate("friends");
+      const profileResult = await User.findOne({
+        _id: ObjectId(profileID),
+      }).populate("friends");
 
-      if (userProfile) {
-        return res.status(200).json(userProfile);
+      // console.log(profileResult);
+
+      if (profileResult) {
+        return res.status(200).json(profileResult);
       }
 
       return res.status(404).json({ msg: "Document not found" });
@@ -93,6 +97,54 @@ router.get(
     }
   }
 );
+
+router.get(
+  "/profilefriends/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const friendID = req.params.id;
+
+      const userID = req.user._id;
+
+      const friendProfile = await User.findOne({
+        _id: ObjectId(friendID),
+      }).populate("friends");
+
+      const friends = friendProfile.friends;
+
+      if (friends) {
+        return res.status(200).json(friends);
+      }
+
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      return res.status(500).json({ error: `${err}` });
+    }
+  }
+);
+
+// router.get(
+//   "/profile",
+//   passport.authenticate("jwt", { session: false }),
+//   async (req, res) => {
+//     try {
+//       const userID = req.user._id;
+
+//       const userProfile = await User.findOne({
+//         _id: ObjectId(userID),
+//       }); //.populate("friends"); //;
+
+//       if (userProfile) {
+//         return res.status(200).json(userProfile);
+//       }
+
+//       return res.status(404).json({ msg: "Document not found" });
+//     } catch (err) {
+//       return res.status(500).json({ error: `${err}` });
+//     }
+//   }
+// );
 
 router.get(
   "/userfriends",
