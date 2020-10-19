@@ -128,15 +128,15 @@ router.get(
 
 // cRud 3 - Read Friends Posts
 router.get(
-  "/friendsposts",
+  "/friendsposts/:id",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const id = req.user._id;
+      const profileID = req.params.id;
 
-      const userFriends = await User.findOne({ _id: ObjectId(id) }).populate(
-        "friends"
-      );
+      const userFriends = await User.findOne({
+        _id: ObjectId(profileID),
+      }).populate("friends");
 
       const friendsPosts = userFriends.friends.map((el) => el.posts).flat();
 
@@ -156,6 +156,36 @@ router.get(
     }
   }
 );
+// router.get(
+//   "/friendsposts",
+//   passport.authenticate("jwt", { session: false }),
+//   async (req, res) => {
+//     try {
+
+//       const id = req.user._id;
+
+//       const userFriends = await User.findOne({ _id: ObjectId(id) }).populate(
+//         "friends"
+//       );
+
+//       const friendsPosts = userFriends.friends.map((el) => el.posts).flat();
+
+//       const postsArray = await Post.find({ _id: friendsPosts }).populate(
+//         "userID"
+//       );
+
+//       const response = { posts: postsArray };
+
+//       if (response) {
+//         return res.status(200).json(response);
+//       }
+
+//       return res.status(404).json({ msg: "Document not found" });
+//     } catch (err) {
+//       return res.status(500).json({ error: `${err}` });
+//     }
+//   }
+// );
 
 // cruD - Delete One
 router.delete(

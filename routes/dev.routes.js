@@ -38,7 +38,7 @@ const commentsList = require("../json/comments.json");
 // crUd - Update
 // cruD - Delete
 
-// const id = req.params._id;
+// const id = req.params.id;
 // console.log(req.params);
 
 // const userId = req.user._id;
