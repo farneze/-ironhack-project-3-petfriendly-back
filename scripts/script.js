@@ -1,10 +1,10 @@
-const axios = require("axios");
+// const axios = require("axios");
 
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+// const jsdom = require("jsdom");
+// const { JSDOM } = jsdom;
 
-const PopulateApi = require("./api_files/populateApi.js");
-var popApi = new PopulateApi();
+// const PopulateApi = require("./api_files/populateApi.js");
+// var popApi = new PopulateApi();
 
 // // ------------------ generates 2000 lorem comments
 // const count = 2000;

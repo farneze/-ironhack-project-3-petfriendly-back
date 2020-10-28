@@ -54,6 +54,21 @@ const commentsList = require("../json/comments.json");
 // OK each post 1 comment from a friend
 // each comment 1% chance of like
 
+router.get("/test", async (req, res) => {
+  try {
+    const resultTask = { msg: "comms ok" };
+
+    if (resultTask) {
+      return res.status(200).json("OK");
+    }
+
+    console.log("----- Not done! -----");
+    return res.status(404).json({ msg: "Task failed" });
+  } catch (err) {
+    return res.status(500).json({ error: `${err}` });
+  }
+});
+
 router.post("/addlikes/:chance", async (req, res) => {
   try {
     const likesChance = Number(req.params.chance);
