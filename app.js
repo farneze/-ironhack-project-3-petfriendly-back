@@ -9,6 +9,18 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_DOMAIN }));
 
+//config for heroku
+const path = require("path");
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "/public")));
+app.use((req, res, next) => {
+  const hostUrl = req.get("host");
+  if (hostUrl.includes("/api") === true) {
+    return res.sendFile(__dirname + "/public/index.html");
+  }
+  return;
+});
+
 const authRouter = require("./routes/auth.routes");
 const homeRouter = require("./routes/home.routes");
 const userRouter = require("./routes/user.routes");
