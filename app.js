@@ -11,8 +11,7 @@ app.use(cors({ origin: process.env.CLIENT_DOMAIN }));
 
 //config for heroku
 const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.static(path.join(__dirname, "./public")));
 app.use((req, res, next) => {
   const hostUrl = req.get("host");
   if (hostUrl.includes("/api") === true) {
