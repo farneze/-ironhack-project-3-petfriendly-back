@@ -101,16 +101,16 @@ router.post("/login", async (req, res, next) => {
   })(req, res, next);
 });
 
-// router.get(
-//   "/profile",
-//   passport.authenticate("jwt", { session: false }),
-//   (req, res, next) => {
-//     res.json({
-//       message: "You made it to the secure route",
-//       user: req.user,
-//       token: req.query.secret_token,
-//     });
-//   }
-// );
+router.get(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    res.json({
+      message: "You made it to the secure route",
+      user: req.user,
+      token: req.query.secret_token,
+    });
+  }
+);
 
 module.exports = router;
