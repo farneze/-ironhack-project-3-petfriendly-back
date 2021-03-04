@@ -124,27 +124,27 @@ router.get(
   }
 );
 
-// router.get(
-//   "/profile",
-//   passport.authenticate("jwt", { session: false }),
-//   async (req, res) => {
-//     try {
-//       const userID = req.user._id;
+router.get(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const userID = req.user._id;
 
-//       const userProfile = await User.findOne({
-//         _id: ObjectId(userID),
-//       }); //.populate("friends"); //;
+      const userProfile = await User.findOne({
+        _id: ObjectId(userID),
+      }); //.populate("friends"); //;
 
-//       if (userProfile) {
-//         return res.status(200).json(userProfile);
-//       }
+      if (userProfile) {
+        return res.status(200).json(userProfile);
+      }
 
-//       return res.status(404).json({ msg: "Document not found" });
-//     } catch (err) {
-//       return res.status(500).json({ error: `${err}` });
-//     }
-//   }
-// );
+      return res.status(404).json({ msg: "Document not found" });
+    } catch (err) {
+      return res.status(500).json({ error: `${err}` });
+    }
+  }
+);
 
 router.get(
   "/userfriends",
