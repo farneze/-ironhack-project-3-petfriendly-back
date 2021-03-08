@@ -17,7 +17,7 @@ const PostSchema = new Schema(
       trim: true,
     },
     weight: {
-      type: Number,
+      type: Double,
       trim: true,
     },
     adoption: Boolean,
