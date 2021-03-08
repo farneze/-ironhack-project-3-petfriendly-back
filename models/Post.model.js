@@ -16,10 +16,6 @@ const PostSchema = new Schema(
       required: [true, "Description is required."],
       trim: true,
     },
-    weight: {
-      type: Double,
-      trim: true,
-    },
     adoption: Boolean,
     userID: { type: Schema.Types.ObjectId, ref: "User" },
     tag: [String],
